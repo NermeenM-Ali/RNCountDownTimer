@@ -1,28 +1,26 @@
-import {useState, useMemo} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import useCountDownTimer from './src/hooks/useCountDownTimer';
 
 const App = () => {
-  const [isCounting, setIsCounting] = useState(true);
-  const {remainingTime, start, stop} = useCountDownTimer({
-    isPlaying: isCounting,
-    duration: 120, // 2 mins
-    onComplete: () => {
-      console.log('Timer finished!');
-      stop();
+  const [isStart, setIsStart] = useState(true);
+  // 2mis = 120000
+  //25 mins = 1500000
+  const duration = 1500000;
+  const {formattedRemainingTime, stopTimer, resetTimer} = useCountDownTimer(
+    duration,
+    true,
+    () => {
+      stopTimer();
     },
-    onUpdate: time => console.log(`Time remaining: ${time / 1000} seconds`),
-  });
-
-  const formatTime = useMemo(() => {
-    const minutes = Math.floor(120 / 60);
-    const seconds = remainingTime % 60;
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  }, [remainingTime]);
+  );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>{formatTime}</Text>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>{formattedRemainingTime}</Text>
+      <TouchableOpacity onPress={resetTimer}>
+        <Text>Reset</Text>
+      </TouchableOpacity>
     </View>
   );
 };
